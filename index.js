@@ -41,6 +41,7 @@ async function run() {
 
     const serverCollection = client.db("carDoctor").collection("services");
     const bookCollection = client.db("carDoctor").collection("bookings");
+    const productsCollection = client.db("carDoctor").collection("product")
 
 
     //auth related api
@@ -73,6 +74,27 @@ async function run() {
       };
 
       const result = await serverCollection.findOne(query, options);
+      res.send(result);
+    });
+
+
+    // product
+    app.get("/product", logger, async (req, res) => {
+      const cursor = productsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      const options = {
+        // Include only the `title` and `imdb` fields in the returned document
+        projection: { title: 1, price: 1, product_id: 1, img: 1 },
+      };
+
+      const result = await productsCollection.findOne(query, options);
       res.send(result);
     });
 
